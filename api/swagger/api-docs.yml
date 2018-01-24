@@ -1,0 +1,64 @@
+---
+swagger: '2.0'
+info:
+  title: Loyalty Program
+  description: 'A simple loyalty checkin application.'
+basePath: /api
+tags:
+  - name: "Customers"
+    description: "Get, Add, or Update customer documents"
+
+####### DEFINITIONS ########
+paths:
+  /checkin/{phone}:
+    get:
+      tags:
+        - "Customers"
+      summary: Customer Check-In
+      operationId: checkin
+      produces:
+        - object
+      parameters:
+        - name: phone
+          in: path
+          description: phone number
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Customer's document updated
+        '202':
+          description: Customer checked-in less than 5 minutes ago
+        '204':
+          description: Customer does not exist
+  /newCustomer:
+    post:
+      tags:
+        - "Customers"
+      summary: Add a new customer to the database
+      operationId: newcustomer
+      produces:
+        - object
+      parameters:
+        - in: body
+          name: customer
+          description: The customer information.
+          schema:
+            type: object
+            required:
+              - phone
+              - firstName
+              - lastName
+              - email
+            properties:
+              phone:
+                type: integer
+              firstName:
+                type: string
+              lastName:
+                type: string
+              email:
+                type: string
+      responses:
+        '200':
+          description: New customer added to database
