@@ -17,8 +17,6 @@
       web:
         container_name: web
         build: web
-        volumes:
-          - './web:/usr/src/app'
         ports:
           - 3000:3000
 

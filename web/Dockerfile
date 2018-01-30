@@ -1,19 +1,13 @@
-FROM node:9.4
-
-RUN mkdir /usr/src/app
+FROM 	node:latest
 
 WORKDIR /usr/src/app
 
-ENV PATH /usr/src/app/node_modules/.bin:$PATH
+COPY 	package.json ./
 
-ADD package.json /usr/src/app/package.json
+RUN 	npm install --silent
 
-RUN npm install --silent
+COPY	. .
 
-RUN npm install react-scripts@1.1.0 -g --silent
+EXPOSE 	3000
 
-RUN npm install bootstrap --silent
-
-EXPOSE 3000
-
-CMD ["npm", "start"]
+CMD 	["npm", "start"]
