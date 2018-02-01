@@ -1,40 +1,39 @@
-import React, { Component } from 'react';
-import { FormErrors } from './FormErrors';
-import './Form.css';
+import React, { Component } from 'react'
+import { FormErrors } from './FormErrors'
+import './Form.css'
 
 class Form extends Component {
   constructor (props) {
-    super(props);
+    super(props)
     this.state = {
       phone: '',
       firstName: '',
       lastName: '',
       email: '',
-      formErrors: {phone: '', firstName: '', lastName: '', email: ''},
-      apiResults: '',
       phoneValid: false,
       formValid: true,
+      formErrors: {phone: '', firstName: '', lastName: '', email: ''},
       showCustomerDetails: false
     }
     this.checkIn = this.checkIn.bind(this)
+    this.newCustomer = this.newCustomer.bind(this)
   }
 
   checkIn = async() =>  {
     const { phone } = this.state
     try {
       const url = 'http://localhost:8080/api/checkin/' + phone
-      const response = await fetch(url);
+      const response = await fetch(url)
       if(response.status === 200) {
         console.log(response.status)
-        this.setState({ showCustomerDetails: false })
-        const responseJson = await response.json();
+        const responseJson = await response.json()
         console.log(responseJson)
-        return responseJson;
+        this.setState({ phone: '' })
+        return responseJson
       } else if (response.status === 202) {
         console.log(response.status)
-        this.setState({ showCustomerDetails: false })
         console.log("Must wait 5 minute between check-ins")
-        return;
+        return
       } else {
         console.log(response.status)
         console.log("Customer does not exist")
@@ -42,7 +41,7 @@ class Form extends Component {
         return
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
@@ -61,49 +60,54 @@ class Form extends Component {
         method: 'POST',
         headers: header,
         body: JSON.stringify(jsonbody)
-      });
-      let responseJson = await response.json();
-      return responseJson;
+      })
+      let responseJson = await response.json()
+      this.setState({ phone: '', firstName: '', lastName: '', email: '', showCustomerDetails: false })
+      return responseJson
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
   handleUserInput = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
+    const name = e.target.name
+    const value = e.target.value
     this.setState({[name]: value},
-                  () => { this.validateField(name, value) });
+      () => { this.validateField(name, value) })
   }
 
   validateField(fieldName, value) {
-    let fieldValidationErrors = this.state.formErrors;
-    let phoneValid = this.state.phoneValid;
+    let fieldValidationErrors = this.state.formErrors
+    let phoneValid = this.state.phoneValid
 
     switch(fieldName) {
       case 'phone':
-        phoneValid = value.match(/^\d{3}-\d{3}-\d{4}$/i);
-        fieldValidationErrors.phone = phoneValid ? '' : ' is invalid';
-        break;
+        phoneValid = value.match(/^\d{3}-\d{3}-\d{4}$/i)
+        fieldValidationErrors.phone = phoneValid ? '' : ' is invalid'
+        break
       default:
-        break;
+        break
     }
-    this.setState({formErrors: fieldValidationErrors,
+    this.setState({ formErrors: fieldValidationErrors,
                     phoneValid: phoneValid
-                  }, this.validateForm);
+                  }, this.validateForm)
   }
 
   validateForm() {
-    this.setState({formValid: this.state.phoneValid});
+    this.setState({ formValid: this.state.phoneValid })
+  }
+ 
+  errorClass(error) {
+    return(error.length === 0 ? '' : 'has-error')
   }
 
-  errorClass(error) {
-    return(error.length === 0 ? '' : 'has-error');
+  onSubmit = (e) => {
+    e.preventDefault()
   }
 
   render () {
     return (
-      <form className="theForm">
+      <form className="theForm" onSubmit={this.onSubmit}>
         <h2>Customer Loyalty Program</h2>
         <div className="panel panel-default">
           <FormErrors formErrors={this.state.formErrors} />
@@ -146,16 +150,20 @@ class Form extends Component {
             : null
         }
         { this.state.showCustomerDetails 
-            ? <button type="submit" className="btn btn-primary" onClick={this.newCustomer}>Sign Up</button>
+            ? null
+            : <div style={{margin:10}}>
+                <button type="submit" className="btn btn-primary" onClick={this.checkIn}>Check In</button>
+              </div>
+        }
+        { this.state.showCustomerDetails
+            ? <div style={{margin:10}}>
+                <button type="submit" className="btn btn-primary" onClick={this.newCustomer}>Sign Up</button>
+              </div>
             : null
         }
-        { this.state.showCustomerDetails 
-            ? null
-            : <button type="submit" className="btn btn-primary" onClick={this.checkIn}>Check In</button>
-        }  
       </form>
     )
   }
 }
 
-export default Form;
+export default Form
