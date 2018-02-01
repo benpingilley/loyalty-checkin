@@ -94,7 +94,7 @@ class Form extends Component {
   }
 
   validateForm() {
-    this.setState({ formValid: this.state.phone });
+    this.setState({ formValid: this.state.phone })
   }
  
   errorClass(error) {
