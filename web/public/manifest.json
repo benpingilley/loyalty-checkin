@@ -1,1 +1,9 @@
 
+{
+  "short_name": "Loyalty Program",
+  "name": "Customer Loyalty Program",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

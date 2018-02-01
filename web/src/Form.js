@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { FormErrors } from './FormErrors'
 import './Form.css'
 
 class Form extends Component {
@@ -11,6 +12,7 @@ class Form extends Component {
       email: '',
       phoneValid: false,
       formValid: true,
+      formErrors: {phone: '', firstName: '', lastName: '', email: ''},
       showCustomerDetails: false
     }
     this.checkIn = this.checkIn.bind(this)
@@ -26,7 +28,7 @@ class Form extends Component {
         console.log(response.status)
         const responseJson = await response.json()
         console.log(responseJson)
-        this.setState({ phone: '' });
+        this.setState({ phone: '' })
         return responseJson
       } else if (response.status === 202) {
         console.log(response.status)
@@ -60,7 +62,7 @@ class Form extends Component {
         body: JSON.stringify(jsonbody)
       })
       let responseJson = await response.json()
-      this.setState({ phone: '', firstName: '', lastName: '', email: '', showCustomerDetails: false });
+      this.setState({ phone: '', firstName: '', lastName: '', email: '', showCustomerDetails: false })
       return responseJson
     } catch (error) {
       console.error(error)
@@ -68,9 +70,35 @@ class Form extends Component {
   }
 
   handleUserInput = (e) => {
-    const state = this.state
-    state[e.target.name] = e.target.value
-    this.setState(state)
+    const name = e.target.name
+    const value = e.target.value
+    this.setState({[name]: value},
+      () => { this.validateField(name, value) })
+  }
+
+  validateField(fieldName, value) {
+    let fieldValidationErrors = this.state.formErrors
+    let phoneValid = this.state.phoneValid
+
+    switch(fieldName) {
+      case 'phone':
+        phoneValid = value.match(/^\d{3}-\d{3}-\d{4}$/i)
+        fieldValidationErrors.phone = phoneValid ? '' : ' is invalid'
+        break
+      default:
+        break
+    }
+    this.setState({ formErrors: fieldValidationErrors,
+                    phoneValid: phoneValid
+                  }, this.validateForm)
+  }
+
+  validateForm() {
+    this.setState({ formValid: this.state.phone });
+  }
+ 
+  errorClass(error) {
+    return(error.length === 0 ? '' : 'has-error')
   }
 
   onSubmit = (e) => {
@@ -81,6 +109,9 @@ class Form extends Component {
     return (
       <form className="theForm" onSubmit={this.onSubmit}>
         <h2>Customer Loyalty Program</h2>
+        <div className="panel panel-default">
+          <FormErrors formErrors={this.state.formErrors} />
+        </div>
         <div>
           <label htmlFor="phone">Phone Number</label>
           <input type="phone" required className="form-control" name="phone"
