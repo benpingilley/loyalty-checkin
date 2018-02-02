@@ -10,6 +10,7 @@ class Form extends Component {
       firstName: '',
       lastName: '',
       email: '',
+      points: false,
       phoneValid: false,
       formValid: true,
       formErrors: {phone: '', firstName: '', lastName: '', email: ''},
@@ -17,6 +18,7 @@ class Form extends Component {
     }
     this.checkIn = this.checkIn.bind(this)
     this.newCustomer = this.newCustomer.bind(this)
+    this.clear = this.clear.bind(this)
   }
 
   checkIn = async() =>  {
@@ -28,7 +30,7 @@ class Form extends Component {
         console.log(response.status)
         const responseJson = await response.json()
         console.log(responseJson)
-        this.setState({ phone: '' })
+        this.setState({ points: responseJson.points })
         return responseJson
       } else if (response.status === 202) {
         console.log(response.status)
@@ -47,6 +49,7 @@ class Form extends Component {
 
   newCustomer = async() => {
     const { phone, firstName, lastName, email } = this.state
+    this.setState({ showCustomerDetails: false })
     try {
       const url = 'http://localhost:8080/api/newcustomer'
       const jsonbody = {
@@ -62,11 +65,14 @@ class Form extends Component {
         body: JSON.stringify(jsonbody)
       })
       let responseJson = await response.json()
-      this.setState({ phone: '', firstName: '', lastName: '', email: '', showCustomerDetails: false })
       return responseJson
     } catch (error) {
       console.error(error)
     }
+  }
+
+  clear() {
+      this.setState({ phone: '', firstName: '', lastName: '', email: '', points: false })
   }
 
   handleUserInput = (e) => {
@@ -109,7 +115,7 @@ class Form extends Component {
     return (
       <form className="theForm" onSubmit={this.onSubmit}>
         <h2>Customer Loyalty Program</h2>
-        <div className="panel panel-default">
+        <div className="panel panel-error">
           <FormErrors formErrors={this.state.formErrors} />
         </div>
         <div>
@@ -151,13 +157,22 @@ class Form extends Component {
         }
         { this.state.showCustomerDetails 
             ? null
-            : <div style={{margin:10}}>
+            : <div style={{margin:10, display: 'inline-block'}}>
                 <button type="submit" className="btn btn-primary" onClick={this.checkIn}>Check In</button>
               </div>
         }
         { this.state.showCustomerDetails
-            ? <div style={{margin:10}}>
+            ? <div style={{margin:10, display: 'inline-block'}}>
                 <button type="submit" className="btn btn-primary" onClick={this.newCustomer}>Sign Up</button>
+              </div>
+            : null
+        }
+        <div style={{margin:10, display: 'inline-block'}}>
+          <button type="reset" className="btn btn-primary" onClick={this.clear}>Clear</button>
+        </div>
+        { this.state.points
+            ? <div className="panel panel-points" style={{margin:10}}>
+                {this.state.firstName + ", you have " + this.state.points + " points!"}
               </div>
             : null
         }
