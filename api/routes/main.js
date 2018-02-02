@@ -10,7 +10,7 @@ router.get('/checkin/:phone', async (ctx, next) => {
   const exists = await mongo.checkPhoneNumber(phone)
   if (exists) {
   	const timeSince =  Date.now() - exists.lastModified
-  	if (timeSince > 300000) { // 300000 ms = 5 minutes
+  	if (timeSince > 3000) { // 300000 ms = 5 minutes
   		const checkedin = await mongo.customerCheckin(exists)
   		ctx.body = await mongo.checkPhoneNumber(phone)
   	} else {
