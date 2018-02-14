@@ -6,8 +6,8 @@ const smtp = {
   port: 465,
   secure: true,
   auth: {
-    user: 'first.last@domain.com', // Used my gmail account for testing
-    pass: 'xxXxxXXxXxxX' // Used real password
+    user: 'first.last@domain.com', // From email address
+    pass: 'xxXxxXXxXxxX' // Password
   }
 }
 

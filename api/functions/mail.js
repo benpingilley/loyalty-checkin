@@ -5,7 +5,7 @@ const config = require('./config')
 
 const transporter = nodemailer.createTransport(config.smtp)
 
-const emailPoints = (fromEmail, toEmail, points, callback) => {
+const emailPoints = (fromEmail, toEmail, points) => {
   const text = 'You currently have ' + points + ' loyalty points!'
   transporter.sendMail({
     from: fromEmail,
@@ -13,12 +13,10 @@ const emailPoints = (fromEmail, toEmail, points, callback) => {
     subject: 'Customer Loyalty Program',
     text: text,
   }, function(error, info) {
-    if (error) {
-      callback(500, error)
-    } else {
-      callback(200, 'Message Sent')
-    }
     transporter.close()
+    if (error) {
+      return console.log(error)
+    }
   })
 }
 

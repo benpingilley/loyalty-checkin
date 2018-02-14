@@ -8,7 +8,7 @@ tags:
   - name: "Customers"
     description: "Get, Add, or Update customer documents"
 
-####### DEFINITIONS ########
+####### PATHS ########
 paths:
   /checkin/{phone}:
     get:
@@ -44,21 +44,24 @@ paths:
           name: customer
           description: The customer information.
           schema:
-            type: object
-            required:
-              - phone
-              - firstName
-              - lastName
-              - email
-            properties:
-              phone:
-                type: integer
-              firstName:
-                type: string
-              lastName:
-                type: string
-              email:
-                type: string
+            "$ref": "#/definitions/Customer"
       responses:
         '200':
           description: New customer added to database
+definitions:
+  Customer:
+    type: object
+    required:
+      - phone
+      - firstName
+      - lastName
+      - email
+    properties:
+      phone:
+        type: integer
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
