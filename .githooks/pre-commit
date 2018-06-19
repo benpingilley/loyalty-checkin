@@ -1,0 +1,9 @@
+lintRepo=`./api/node_modules/.bin/eslint ./api --ext .js`
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+    echo "Git Hook pre-commit failed."
+    echo "./api/node_modules/.bin/eslint ./api --ext .js"
+    echo "$lintRepo"
+    exit 1
+fi
+exit 0
