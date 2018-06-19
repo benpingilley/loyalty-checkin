@@ -1,7 +1,13 @@
+// External Modules
 const appRoot = require('app-root-path');
+const mongoist = require('mongoist');
 // Internal Modules
 const config = require(`${appRoot}/config`);
 const mail = require(`${appRoot}/modules/mail`);
+
+const dbConnection = () => {
+  return mongoist('mongodb://mongodb:27017/customers');
+};
 
 /**
  * Check if phone number exists in database
@@ -9,7 +15,7 @@ const mail = require(`${appRoot}/modules/mail`);
  * @return {boolean} - True/False
  */
 const checkPhoneNumber = async (phone) => {
-  const db = config.dbConnection();
+  const db = dbConnection();
   const body = {'phone': phone}; // Create variable with mongo query for customer's phone number
   const exists = await db.customers.find(body); // Return customer with matching phone number
   db.close();
@@ -22,7 +28,7 @@ const checkPhoneNumber = async (phone) => {
  * @return {boolean} - True/False
  */
 const customerCheckin = async (body) => {
-  const db = config.dbConnection();
+  const db = dbConnection();
   body.checkins++; // Increment checkin
   body.lastModified = Date.now(); // Update the lastModified timestamp
   body.points = body.points + 20; // Add 20 points to customer
@@ -39,7 +45,7 @@ const customerCheckin = async (body) => {
  * @return {boolean} - True/False
  */
 const newCustomer = async (body) => {
-  const db = config.dbConnection();
+  const db = dbConnection();
   body.points = 50; // New customers start with 50 points
   body.checkins = 0; // New customers have not yet checked in
   body.lastModified = Date.now(); // Set lastModified timestamp to now
