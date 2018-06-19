@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { FormErrors } from './FormErrors'
 import './Form.css'
+import Cleave from 'cleave.js/react';
+// eslint-disable-next-line
+import CleavePhone from 'cleave.js/dist/addons/cleave-phone.us';
 
 class Form extends Component {
   constructor (props) {
@@ -20,6 +23,11 @@ class Form extends Component {
     this.newCustomer = this.newCustomer.bind(this)
     this.clear = this.clear.bind(this)
   }
+
+  cleave = new Cleave('.input-phone', {
+    phone: true,
+    phoneRegionCode: 'us'
+  });
 
   checkIn = async() =>  {
     const { phone } = this.state
@@ -120,7 +128,8 @@ class Form extends Component {
         </div>
         <div>
           <label htmlFor="phone">Phone Number</label>
-          <input type="phone" required className="form-control" name="phone"
+          <Cleave type="text" required className="form-control" name="phone"
+            options={{ phone: true, phoneRegionCode: 'US', delimiter: '-' }}
             placeholder="555-555-5555"
             value={this.state.phone}
             onChange={this.handleUserInput}  />
